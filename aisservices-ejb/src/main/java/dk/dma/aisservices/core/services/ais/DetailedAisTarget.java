@@ -29,16 +29,16 @@ public class DetailedAisTarget {
 	protected String sog;
 	protected String name;
 	protected String callsign;
-	protected String imoNo;
-	protected String cargo;
+	protected String imoNo = "N/A";
+	protected String cargo = "N/A";
 	protected String country;
-	protected Double draught;
-	protected String heading;
-	protected Double rot;
-	protected String destination;
+	protected String draught = "N/A";
+	protected String heading = "N/A";
+	protected String rot = "N/A";
+	protected String destination = "N/A";
 	protected String navStatus;
-	protected String eta;
-	protected String posAcc;
+	protected String eta = "N/A";
+	protected String posAcc = "N/A";
 	protected String source;
 	protected String pos;
 	protected PastTrack pastTrack = null;	
@@ -70,7 +70,7 @@ public class DetailedAisTarget {
 		this.lastReceived = formatTime(currentTime - aisVessel.getLastReceived().getTime());
 		this.lat = latToPrintable(aisVesselPosition.getLat());
 		this.lon = lonToPrintable(aisVesselPosition.getLon());
-		this.cog = formatDouble(aisVesselPosition.getCog(), 0);
+		this.cog = formatDouble(aisVesselPosition.getCog(), 0);		
 		this.heading = formatDouble(aisVesselPosition.getHeading(), 1);
 		this.sog = formatDouble(aisVesselPosition.getSog(), 1);	
 		this.vesselType = aisVesselStatic.getShipTypeCargo().prettyType();
@@ -86,7 +86,7 @@ public class DetailedAisTarget {
 		if (aisClassAStatic != null) {
 			this.imoNo = Integer.toString(aisClassAStatic.getImo());
 			this.destination = aisClassAStatic.getDestination();
-			this.draught = (double)aisClassAStatic.getDraught();
+			this.draught = formatDouble((double)aisClassAStatic.getDraught(), 0);
 			this.eta = getISO8620(aisClassAStatic.getEta());			
 		}		
 		
@@ -95,6 +95,7 @@ public class DetailedAisTarget {
 			NavigationalStatus navigationalStatus = new NavigationalStatus(aisClassAPosition.getNavStatus());
 			this.navStatus = navigationalStatus.prettyStatus();
 			this.moored = (aisClassAPosition.getNavStatus() == 1 || aisClassAPosition.getNavStatus() == 5);
+			this.rot = formatDouble(aisClassAPosition.getRot(), 1);
 		}
 				
 		if (aisVesselPosition.getPosAcc() == 1) {
@@ -234,19 +235,19 @@ public class DetailedAisTarget {
 		this.country = country;
 	}
 
-	public Double getDraught() {
+	public String getDraught() {
 		return draught;
 	}
 
-	public void setDraught(Double draught) {
+	public void setDraught(String draught) {
 		this.draught = draught;
 	}
 
-	public Double getRot() {
+	public String getRot() {
 		return rot;
 	}
 
-	public void setRot(Double rot) {
+	public void setRot(String rot) {
 		this.rot = rot;
 	}
 
