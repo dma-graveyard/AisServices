@@ -21,8 +21,8 @@ public class DetailedAisTarget {
 	protected double cog;
 	protected boolean moored;
 	protected String vesselType;
-	protected short length;
-	protected byte width;
+	protected Short length = null;
+	protected Byte width = null;
 	protected double sog;
 	protected String name;
 	protected String callsign;
@@ -51,8 +51,13 @@ public class DetailedAisTarget {
 		AisClassAPosition aisClassAPosition = aisVesselPosition.getAisClassAPosition();
 		AisClassAStatic aisClassAStatic = aisVesselStatic.getAisClassAStatic();		
 		
-		this.length = (short) (aisVesselStatic.getDimBow() + aisVesselStatic.getDimStern());
-		this.width = (byte) (aisVesselStatic.getDimPort() + aisVesselStatic.getDimStarboard());		
+		
+		if (aisVesselStatic.getDimBow() != null && aisVesselStatic.getDimStern() != null) {
+			this.length = (short) (aisVesselStatic.getDimBow() + aisVesselStatic.getDimStern());
+		}
+		if (aisVesselStatic.getDimPort() != null && aisVesselStatic.getDimStarboard() != null) {
+			this.width = (byte) (aisVesselStatic.getDimPort() + aisVesselStatic.getDimStarboard());
+		}
 		
 		this.currentTime = System.currentTimeMillis();
 		this.id = aisVessel.getId();

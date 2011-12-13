@@ -25,10 +25,10 @@ public class AisVesselStatic implements Serializable {
 	private int mmsi;
 	private String callsign;
 	private Date created;
-	private short dimBow;
-	private byte dimPort;
-	private byte dimStarboard;
-	private short dimStern;
+	private Short dimBow;
+	private Byte dimPort;
+	private Byte dimStarboard;
+	private Short dimStern;
 	private String name;
 	private Date received;
 	private Byte shipType;
@@ -70,38 +70,38 @@ public class AisVesselStatic implements Serializable {
 	}
 
 	@Column(name = "dim_bow", nullable = true)
-	public short getDimBow() {
+	public Short getDimBow() {
 		return this.dimBow;
 	}
 
-	public void setDimBow(short dimBow) {
+	public void setDimBow(Short dimBow) {
 		this.dimBow = dimBow;
 	}
 
 	@Column(name = "dim_port", nullable = true)
-	public byte getDimPort() {
+	public Byte getDimPort() {
 		return this.dimPort;
 	}
 
-	public void setDimPort(byte dimPort) {
+	public void setDimPort(Byte dimPort) {
 		this.dimPort = dimPort;
 	}
 
 	@Column(name = "dim_starboard", nullable = true)
-	public byte getDimStarboard() {
+	public Byte getDimStarboard() {
 		return this.dimStarboard;
 	}
 
-	public void setDimStarboard(byte dimStarboard) {
+	public void setDimStarboard(Byte dimStarboard) {
 		this.dimStarboard = dimStarboard;
 	}
 
 	@Column(name = "dim_stern", nullable = true)
-	public short getDimStern() {
+	public Short getDimStern() {
 		return this.dimStern;
 	}
 
-	public void setDimStern(short dimStern) {
+	public void setDimStern(Short dimStern) {
 		this.dimStern = dimStern;
 	}
 

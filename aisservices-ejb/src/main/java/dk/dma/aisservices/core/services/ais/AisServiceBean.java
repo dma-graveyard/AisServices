@@ -98,8 +98,6 @@ public class AisServiceBean implements AisService {
 		@SuppressWarnings("unchecked")
 		List<Object[]> lines = query.getResultList();
 		
-		System.out.println("Ship count: " + lines.size());
-		
 		return lines;
 	}
 
