@@ -38,7 +38,7 @@ public class AisServiceBean implements AisService {
 		
 		List<Object[]> lines = getOverviewRows(overviewRequest); 
 		
-		for (Object[] values : lines) {
+		for (Object[] values : lines) {			
 			response.addShip((Integer) values[0], (String) values[1], (Double) values[2], (Double) values[3], (Double) values[4],
 					(Double) values[5], (Byte) values[6], (Byte) values[7]);
 		}
@@ -90,7 +90,6 @@ public class AisServiceBean implements AisService {
 		query.setParameter("now", new Date());
 		if (overviewRequest.getCountries().size() > 0) {
 			for (int i = 0; i < overviewRequest.getCountries().size(); i++) {
-				System.out.println("country: " + overviewRequest.getCountries().get(i));
 				query.setParameter("country" + i, overviewRequest.getCountries().get(i));
 			}
 		}

@@ -51,8 +51,14 @@ public class OverviewResponse {
 			sog = 0d;
 		}
 		
-		ArrayList<String> list = new ArrayList<String>();
-		list.add(Long.toString(Math.round(cog)));
+		
+		// Round cog to nearest 10
+		long cogL = Math.round(cog / 10.0) * 10;
+		if (cogL == 360) cogL = 0;
+		
+		ArrayList<String> list = new ArrayList<String>();		
+		
+		list.add(Long.toString(cogL));
 		list.add(String.format(Locale.US, "%.4f", lat));
 		list.add(String.format(Locale.US, "%.4f", lon));
 		list.add(vesselClass);

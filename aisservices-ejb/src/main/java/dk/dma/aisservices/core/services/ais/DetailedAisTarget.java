@@ -1,6 +1,9 @@
 package dk.dma.aisservices.core.services.ais;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import dk.dma.aisservices.core.domain.AisClassAPosition;
 import dk.dma.aisservices.core.domain.AisClassAStatic;
@@ -14,29 +17,30 @@ public class DetailedAisTarget {
 	protected long id;
 	protected long mmsi;
 	protected String vesselClass;
-	protected long lastReceived;
+	protected String lastReceived;
 	protected long currentTime;
-	protected double lat;
-	protected double lon;
-	protected double cog;
+	protected String lat;
+	protected String lon;
+	protected String cog;
 	protected boolean moored;
 	protected String vesselType;
 	protected Short length = null;
 	protected Byte width = null;
-	protected double sog;
+	protected String sog;
 	protected String name;
 	protected String callsign;
 	protected String imoNo;
 	protected String cargo;
 	protected String country;
 	protected Double draught;
-	protected Double heading;
+	protected String heading;
 	protected Double rot;
 	protected String destination;
 	protected String navStatus;
-	protected Date eta;
-	protected byte posAcc;
+	protected String eta;
+	protected String posAcc;
 	protected String source;
+	protected String pos;
 	protected PastTrack pastTrack = null;	
 
 	public DetailedAisTarget() {
@@ -63,13 +67,14 @@ public class DetailedAisTarget {
 		this.id = aisVessel.getId();
 		this.mmsi = aisVessel.getMmsi();
 		this.vesselClass = aisVessel.getVesselClass();
-		this.lastReceived = ((currentTime - aisVessel.getLastReceived().getTime()) / 1000);
-		this.lat = aisVesselPosition.getLat();
-		this.lon = aisVesselPosition.getLon();
-		this.cog = aisVesselPosition.getCog();
-		this.heading = aisVesselPosition.getHeading();
-		this.sog = aisVesselPosition.getSog(); 		
+		this.lastReceived = formatTime(currentTime - aisVessel.getLastReceived().getTime());
+		this.lat = latToPrintable(aisVesselPosition.getLat());
+		this.lon = lonToPrintable(aisVesselPosition.getLon());
+		this.cog = formatDouble(aisVesselPosition.getCog(), 0);
+		this.heading = formatDouble(aisVesselPosition.getHeading(), 1);
+		this.sog = formatDouble(aisVesselPosition.getSog(), 1);	
 		this.vesselType = aisVesselStatic.getShipTypeCargo().prettyType();
+		this.country = aisVessel.getCountry();
 		
 		this.name = aisVesselStatic.getName();
 		this.callsign = aisVesselStatic.getCallsign();
@@ -82,7 +87,7 @@ public class DetailedAisTarget {
 			this.imoNo = Integer.toString(aisClassAStatic.getImo());
 			this.destination = aisClassAStatic.getDestination();
 			this.draught = (double)aisClassAStatic.getDraught();
-			this.eta = aisClassAStatic.getEta();			
+			this.eta = getISO8620(aisClassAStatic.getEta());			
 		}		
 		
 		// Class A position
@@ -91,23 +96,102 @@ public class DetailedAisTarget {
 			this.navStatus = navigationalStatus.prettyStatus();
 			this.moored = (aisClassAPosition.getNavStatus() == 1 || aisClassAPosition.getNavStatus() == 5);
 		}
-		
-		// Determine country TODO move to DB
-//		String str = Long.toString(mmsi);
-//		if (str.length() > 3) {
-//			str = str.substring(0, 3);
-//			MidCountry midCountry = CountryMapper.getInstance().getByMid(Integer.parseInt(str)); 
-//			if (midCountry != null) {
-//				country = midCountry.getName();
-//			}
-//		}
-		
-		if (aisVesselPosition.getHeading() != null) {
-			this.heading = aisVesselPosition.getHeading();
+				
+		if (aisVesselPosition.getPosAcc() == 1) {
+			this.posAcc = "High";
+		} else {
+			this.posAcc = "Low";
 		}
 		
-		this.posAcc = aisVesselPosition.getPosAcc();
+		this.pos = "N/A";
+		if (aisVesselPosition.getLat() != null && aisVesselPosition.getLon() != null) {
+			this.pos = latToPrintable(aisVesselPosition.getLat()) + " - " + lonToPrintable(aisVesselPosition.getLon());
+		}
 		
+	}
+	
+	public static String getISO8620(Date date) {
+		if (date == null) {
+			return "N/A";
+		}
+		SimpleDateFormat iso8601gmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		iso8601gmt.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+		return iso8601gmt.format(date);
+	}
+	
+	public static String formatTime(Long time) {
+		if (time == null) {
+			return "N/A";
+		}
+		long secondInMillis = 1000;
+		long minuteInMillis = secondInMillis * 60;
+		long hourInMillis = minuteInMillis * 60;
+		long dayInMillis = hourInMillis * 24;
+
+		long elapsedDays = time / dayInMillis;
+		time = time % dayInMillis;
+		long elapsedHours = time / hourInMillis;
+		time = time % hourInMillis;
+		long elapsedMinutes = time / minuteInMillis;
+		time = time % minuteInMillis;
+		long elapsedSeconds = time / secondInMillis;
+
+		if (elapsedDays > 0) {
+			return String.format("%02d:%02d:%02d:%02d", elapsedDays, elapsedHours, elapsedMinutes, elapsedSeconds);
+		} else if (elapsedHours > 0) {
+			return String.format("%02d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds);
+		} else {
+			return String.format("%02d:%02d", elapsedMinutes, elapsedSeconds);
+		}
+	}
+	
+	public static String latToPrintable(Double lat) {
+		if (lat == null) {
+			return "N/A";
+		}
+		String ns = "N";
+		if (lat < 0) {
+			ns = "S";
+			lat *= -1;
+		}
+		int hours = (int)lat.doubleValue();
+		lat -= hours;
+		lat *= 60;
+		String latStr = String.format(Locale.US, "%3.3f", lat);
+		while (latStr.indexOf('.') < 2) {
+			latStr = "0" + latStr;
+		}		
+		return String.format(Locale.US, "%02d %s%s", hours, latStr, ns);
+	}
+	
+	public static String lonToPrintable(Double lon) {
+		if (lon == null) {
+			return "N/A";
+		}
+		String ns = "E";
+		if (lon < 0) {
+			ns = "W";
+			lon *= -1;
+		}
+		int hours = (int)lon.doubleValue();
+		lon -= hours;
+		lon *= 60;		
+		String lonStr = String.format(Locale.US, "%3.3f", lon);
+		while (lonStr.indexOf('.') < 2) {
+			lonStr = "0" + lonStr;
+		}		
+		return String.format(Locale.US, "%03d %s%s", hours, lonStr, ns);
+	}
+	
+	public static String formatDouble(Double d, int decimals) {
+		if (d == null) {
+			return "N/A";
+		}
+		if (decimals == 0) {
+			return String.format(Locale.US, "%d", Math.round(d));
+		}
+		String format = "%." + decimals + "f";
+		return String.format(Locale.US, format, d);
 	}
 
 	public String getName() {
@@ -158,14 +242,6 @@ public class DetailedAisTarget {
 		this.draught = draught;
 	}
 
-	public Double getHeading() {
-		return heading;
-	}
-
-	public void setHeading(Double heading) {
-		this.heading = heading;
-	}
-
 	public Double getRot() {
 		return rot;
 	}
@@ -190,19 +266,19 @@ public class DetailedAisTarget {
 		this.navStatus = navStatus;
 	}
 
-	public Date getEta() {
+	public String getEta() {
 		return eta;
 	}
 
-	public void setEta(Date eta) {
+	public void setEta(String eta) {
 		this.eta = eta;
 	}
 
-	public byte getPosAcc() {
+	public String getPosAcc() {
 		return posAcc;
 	}
 
-	public void setPosAcc(byte posAcc) {
+	public void setPosAcc(String posAcc) {
 		this.posAcc = posAcc;
 	}
 	
@@ -222,28 +298,20 @@ public class DetailedAisTarget {
 		this.vesselClass = vesselClass;
 	}
 
-	public double getLat() {
+	public String getLat() {
 		return lat;
 	}
 
-	public void setLat(double lat) {
+	public void setLat(String lat) {
 		this.lat = lat;
 	}
 
-	public double getLon() {
+	public String getLon() {
 		return lon;
 	}
 
-	public void setLon(double lon) {
+	public void setLon(String lon) {
 		this.lon = lon;
-	}
-
-	public double getCog() {
-		return cog;
-	}
-
-	public void setCog(double hdg) {
-		this.cog = hdg;
 	}
 
 	public boolean isMoored() {
@@ -270,14 +338,6 @@ public class DetailedAisTarget {
 		this.length = length;
 	}
 
-	public double getSog() {
-		return sog;
-	}
-
-	public void setSog(double sog) {
-		this.sog = sog;
-	}
-
 	public long getCurrentTime() {
 		return currentTime;
 	}
@@ -286,11 +346,11 @@ public class DetailedAisTarget {
 		this.currentTime = currentTime;
 	}
 
-	public long getLastReceived() {
+	public String getLastReceived() {
 		return lastReceived;
 	}
 
-	public void setLastReceived(long lastReceived) {
+	public void setLastReceived(String lastReceived) {
 		this.lastReceived = lastReceived;
 	}
 
@@ -316,6 +376,54 @@ public class DetailedAisTarget {
 	
 	public void setPastTrack(PastTrack pastTrack) {
 		this.pastTrack = pastTrack;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getCog() {
+		return cog;
+	}
+
+	public void setCog(String cog) {
+		this.cog = cog;
+	}
+
+	public String getSog() {
+		return sog;
+	}
+
+	public void setSog(String sog) {
+		this.sog = sog;
+	}
+
+	public String getHeading() {
+		return heading;
+	}
+
+	public void setHeading(String heading) {
+		this.heading = heading;
+	}
+
+	public void setLength(Short length) {
+		this.length = length;
+	}
+
+	public void setWidth(Byte width) {
+		this.width = width;
+	}
+	
+	public String getPos() {
+		return pos;
+	}
+	
+	public void setPos(String pos) {
+		this.pos = pos;
 	}
 	
 }
