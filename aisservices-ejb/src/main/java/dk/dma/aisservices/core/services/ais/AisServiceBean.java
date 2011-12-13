@@ -97,6 +97,9 @@ public class AisServiceBean implements AisService {
 
 		@SuppressWarnings("unchecked")
 		List<Object[]> lines = query.getResultList();
+		
+		System.out.println("Ship count: " + lines.size());
+		
 		return lines;
 	}
 
@@ -125,7 +128,8 @@ public class AisServiceBean implements AisService {
 	@Override
 	public PastTrack getPastTrack(int mmsi) {
 		// Default seconds back
-		int secondsBack = 30 * 60; // 30 min
+		//int secondsBack = 30 * 60; // 30 min
+		int secondsBack = 120 * 60; // 2 hours
 		return getPastTrack(mmsi, secondsBack);
 	}
 
