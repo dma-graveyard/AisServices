@@ -54,8 +54,7 @@ public class Ais extends HttpApiServlet {
         else if (method.equalsIgnoreCase("table")) {
         	response.setContentType("text/plain");
         	OverviewRequest overviewRequest = new OverviewRequest(params);        	
-        	String table = aisService.getOverviewTable(overviewRequest);
-        	
+        	String table = aisService.getOverviewTable(overviewRequest);        	
         	output = table;
         }
         

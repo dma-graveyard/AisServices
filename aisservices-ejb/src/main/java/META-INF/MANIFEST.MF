@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: aisservices-ejbClient.jar aislib-1.4.jar enavshore-common.jar commons-lang-2.5.jar
+Class-Path: aisservices-ejbClient.jar enavshore-common.jar commons-lang-2.5.jar aislib-1.4.jar
 

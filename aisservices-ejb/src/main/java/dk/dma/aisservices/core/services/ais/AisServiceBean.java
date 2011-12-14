@@ -117,7 +117,14 @@ public class AisServiceBean implements AisService {
 			aisTarget.init(target);
 		}
 		if (pastTrack) {
-			aisTarget.setPastTrack(getPastTrack(target.getMmsi()));
+			// Determine secondsBack based on source
+			int secondsBack = 120 * 60; // 2 hours
+			boolean checkMaxGap = true;
+			if (aisTarget.getSource().equals("SAT")) {
+				secondsBack = 36 * 60 * 60; // 36 hours
+				checkMaxGap = false;
+			}						
+			aisTarget.setPastTrack(getPastTrack(target.getMmsi(), secondsBack, checkMaxGap));
 		}
 		return aisTarget;
 	}
@@ -125,14 +132,13 @@ public class AisServiceBean implements AisService {
 	@Override
 	public PastTrack getPastTrack(int mmsi) {
 		// Default seconds back
-		//int secondsBack = 30 * 60; // 30 min
 		int secondsBack = 120 * 60; // 2 hours
-		return getPastTrack(mmsi, secondsBack);
+		return getPastTrack(mmsi, secondsBack, true);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public PastTrack getPastTrack(int mmsi, int secondsBack) {
+	public PastTrack getPastTrack(int mmsi, int secondsBack, boolean checkMaxGap) {
 		PastTrack pastTrack = new PastTrack();
 		Query query = entityManager.createNamedQuery("AisVesselTrack:get");
 		query.setParameter("mmsi", mmsi);
@@ -146,7 +152,7 @@ public class AisServiceBean implements AisService {
 		for (AisVesselTrack aisVesselTrack : list) {
 			// Determine if too long between points
 			long elapsed = lastTime.getTime() - aisVesselTrack.getTime().getTime();
-			if (elapsed > MAX_PAST_TRACK_GAP) {
+			if (checkMaxGap && elapsed > MAX_PAST_TRACK_GAP) {
 				break;
 			}
 			lastTime = aisVesselTrack.getTime();

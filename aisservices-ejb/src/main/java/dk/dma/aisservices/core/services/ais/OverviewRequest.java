@@ -36,8 +36,8 @@ public class OverviewRequest {
 		if (params.exists("neLon")) {
 			neLon = Double.parseDouble(params.getFirst("neLon"));
 		}
-		if (params.exists("countries")) {
-			String[] arr = StringUtils.split(params.getFirst("countries"), ",");
+		if (params.exists("country")) {
+			String[] arr = StringUtils.split(params.getFirst("country"), ",");
 			for (String country : arr) {
 				countries.add(country);
 			}

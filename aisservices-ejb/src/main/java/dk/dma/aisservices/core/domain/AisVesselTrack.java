@@ -22,6 +22,7 @@ public class AisVesselTrack implements Serializable {
 	private Double sog;
 	private Double cog;
 	private Date time;
+	private Date validTo;
 	private Date created;
 	private AisVesselTarget aisVesselTarget;
 
@@ -74,6 +75,15 @@ public class AisVesselTrack implements Serializable {
 	
 	public void setTime(Date time) {
 		this.time = time;
+	}
+	
+	@Column(name="valid_to", nullable = false)
+	public Date getValidTo() {
+		return validTo;
+	}
+	
+	public void setValidTo(Date validTo) {
+		this.validTo = validTo;
 	}
 
 	@Column(nullable = false)
@@ -132,6 +142,8 @@ public class AisVesselTrack implements Serializable {
 		builder.append(cog);
 		builder.append(", time=");
 		builder.append(time);
+		builder.append(", validTo =");
+		builder.append(validTo);
 		builder.append(", created=");
 		builder.append(created);
 		builder.append("]");

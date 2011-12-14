@@ -40,7 +40,7 @@ public interface AisService {
 	 * @param pastTrack (get past track also)
 	 * @return
 	 */
-	public DetailedAisTarget getTargetDetails(int id, boolean pastTrack);
+	public DetailedAisTarget getTargetDetails(int id, boolean pastTrak);
 
 	/**
 	 * Get past track for AIS target
@@ -52,10 +52,11 @@ public interface AisService {
 	/**
 	 * Get past track seconds back
 	 * @param mmsi
-	 * @param secondsBack
+	 * @param secondsBack The track for this many minutes back
+	 * @param checkMaxGap Check if the gap between points becomes to large
 	 * @return
 	 */
-	public PastTrack getPastTrack(int mmsi, int secondsBack);
+	public PastTrack getPastTrack(int mmsi, int secondsBack, boolean checkMaxGap);
 	
 	
 }

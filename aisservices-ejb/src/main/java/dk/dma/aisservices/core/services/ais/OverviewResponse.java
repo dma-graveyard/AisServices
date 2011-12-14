@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import dk.dma.aisservices.core.services.ais.ShipTypeMapper.ShipTypeColor;
 import dk.frv.ais.message.ShipTypeCargo;
 
 public class OverviewResponse {
@@ -11,6 +12,8 @@ public class OverviewResponse {
 	private HashMap<Integer, ArrayList<String>> ships = new HashMap<Integer, ArrayList<String>>();
 	private long currentTime;
 	private long shipCount = 0;
+	
+	private static ShipTypeMapper shipTypeMapper = ShipTypeMapper.getInstance();
 	
 	public OverviewResponse() {
 		currentTime = System.currentTimeMillis();
@@ -63,7 +66,8 @@ public class OverviewResponse {
 		list.add(String.format(Locale.US, "%.4f", lon));
 		list.add(vesselClass);
 		ShipTypeCargo shipTypeCargo = new ShipTypeCargo(shipType);
-		list.add(Integer.toString(shipTypeCargo.getShipType().ordinal()));			
+		ShipTypeColor color = shipTypeMapper.getColor(shipTypeCargo.getShipType());
+		list.add(Integer.toString(color.ordinal()));			
 		
 		list.add((navStatus != null && (navStatus == 1 || navStatus ==5)) ? "1" : "0");
 		

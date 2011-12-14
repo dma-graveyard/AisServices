@@ -10,6 +10,8 @@ import dk.dma.aisservices.core.domain.AisClassAStatic;
 import dk.dma.aisservices.core.domain.AisVesselPosition;
 import dk.dma.aisservices.core.domain.AisVesselStatic;
 import dk.dma.aisservices.core.domain.AisVesselTarget;
+import dk.frv.ais.country.CountryMapper;
+import dk.frv.ais.country.MidCountry;
 import dk.frv.ais.message.NavigationalStatus;
 
 public class DetailedAisTarget {
@@ -74,7 +76,16 @@ public class DetailedAisTarget {
 		this.heading = formatDouble(aisVesselPosition.getHeading(), 1);
 		this.sog = formatDouble(aisVesselPosition.getSog(), 1);	
 		this.vesselType = aisVesselStatic.getShipTypeCargo().prettyType();
-		this.country = aisVessel.getCountry();
+
+		if (aisVessel.getCountry() != null) {
+			CountryMapper countryMapper = CountryMapper.getInstance();		
+			MidCountry midCountry = countryMapper.getByCode(aisVessel.getCountry()); 
+			if (midCountry != null) {
+				this.country = midCountry.getName();
+			}
+		} else {
+			this.country ="N/A";
+		}
 		
 		this.name = aisVesselStatic.getName();
 		this.callsign = aisVesselStatic.getCallsign();
