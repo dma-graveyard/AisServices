@@ -97,7 +97,7 @@ public class DetailedAisTarget {
 		if (aisClassAStatic != null) {
 			this.imoNo = Integer.toString(aisClassAStatic.getImo());
 			this.destination = aisClassAStatic.getDestination();
-			this.draught = formatDouble((double)aisClassAStatic.getDraught(), 0);
+			this.draught = formatDouble((double)aisClassAStatic.getDraught() / 10.0, 1);
 			this.eta = getISO8620(aisClassAStatic.getEta());			
 		}		
 		
