@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,12 +18,15 @@ import dk.dma.aisservices.core.domain.AisVesselTrack;
 import dk.frv.ais.geo.GeoLocation;
 
 @Stateless
+@Remote(AisServiceRemote.class)
+@Local(AisService.class)
 public class AisServiceBean implements AisService {
 
 	private static final long MAX_PAST_TRACK_GAP = 10 * 60 * 1000; // 10 min
 	private static final long MIN_PAST_TRACK_DISTANCE = 500; // 500 meters
+	private static final long MAX_TARGET_AGE = 6 * 60 * 1000; // 6 min
 
-	@PersistenceContext(unitName = "enav")
+	@PersistenceContext(unitName = "ais")
 	private EntityManager entityManager;
 
 	@Override
@@ -99,6 +104,27 @@ public class AisServiceBean implements AisService {
 		
 		return lines;
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<AisVesselTarget> getAisTargets(double swLat,double swLon, double neLat, double neLon) {		
+		Query query = entityManager.createQuery("" +
+				"SELECT vt FROM AisVesselTarget vt " +
+				"WHERE vt.aisVesselPosition.lat > :swLat " +
+				"AND vt.aisVesselPosition.lon > :swLon " +
+				"AND vt.aisVesselPosition.lat < :neLat " +
+				"AND vt.aisVesselPosition.lon < :neLon " +
+				"AND vt.aisVesselPosition.received > :newDate");
+
+		query.setParameter("swLat",swLat);
+		query.setParameter("swLon", swLon);
+		query.setParameter("neLat", neLat);
+		query.setParameter("neLon", neLon);
+		query.setParameter("newDate", new Date(System.currentTimeMillis()-MAX_TARGET_AGE));
+		
+		return query.getResultList();
+	
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -174,6 +200,12 @@ public class AisServiceBean implements AisService {
 		}
 
 		return pastTrack;
+	}
+
+	@Override
+	public Date getLatestUpdate() {
+		Query query = entityManager.createQuery("SELECT MAX(vt.lastReceived) FROM AisVesselTarget vt");
+		return (Date)query.getSingleResult();
 	}
 
 }

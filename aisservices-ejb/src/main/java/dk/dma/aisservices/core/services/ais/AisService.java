@@ -1,10 +1,10 @@
 package dk.dma.aisservices.core.services.ais;
 
-import javax.ejb.Local;
+import java.util.Date;
+import java.util.List;
 
 import dk.dma.aisservices.core.domain.AisVesselTarget;
 
-@Local
 public interface AisService {
 	
 	/**
@@ -26,6 +26,16 @@ public interface AisService {
 	 * @return
 	 */
 	public String getOverviewTable(OverviewRequest overviewRequest);
+	
+	/**
+	 * Get AIS targets within bounding box
+	 * @param swLat
+	 * @param swLon
+	 * @param neLat
+	 * @param neLon
+	 * @return
+	 */
+	public List<AisVesselTarget> getAisTargets(double swLat,double swLon, double neLat, double neLon);
 	
 	/**
 	 * Get vessel target by id
@@ -57,6 +67,12 @@ public interface AisService {
 	 * @return
 	 */
 	public PastTrack getPastTrack(int mmsi, int secondsBack, boolean checkMaxGap);
+	
+	/**
+	 * Get the date for the latest update in the database
+	 * @return
+	 */
+	public Date getLatestUpdate();
 	
 	
 }

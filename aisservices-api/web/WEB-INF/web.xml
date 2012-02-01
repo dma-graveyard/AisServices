@@ -14,6 +14,17 @@
 		<servlet-name>Ais</servlet-name>
 		<url-pattern>/http/service</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Status</servlet-name>
+		<servlet-class>dk.dma.aisservices.api.http.Status</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Status</servlet-name>
+		<url-pattern>/http/status</url-pattern>
+	</servlet-mapping>
+	
 
 
 </web-app>
