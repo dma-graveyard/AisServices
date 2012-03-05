@@ -1,7 +1,9 @@
 package dk.dma.aisservices.core.services.ais;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -13,7 +15,9 @@ public class OverviewRequest {
 	private double swLon = -360;
 	private double neLat = 360;
 	private double neLon = 360;
-	private List<String> countries = new ArrayList<String>();
+	private Map<String, List<String>> filterMap = new HashMap<String, List<String>>();
+	
+	private static final String[] filterNames = {"vesselClass", "country", "sourceType", "sourceCountry", "sourceRegion", "sourceBs", "sourceSystem"};
 		
 	public OverviewRequest() {
 		
@@ -36,10 +40,16 @@ public class OverviewRequest {
 		if (params.exists("neLon")) {
 			neLon = Double.parseDouble(params.getFirst("neLon"));
 		}
-		if (params.exists("country")) {
-			String[] arr = StringUtils.split(params.getFirst("country"), ",");
-			for (String country : arr) {
-				countries.add(country);
+		for (String filterName : filterNames) {
+			if (params.exists(filterName)) {
+				List<String> values = new ArrayList<String>();
+				String[] arr = StringUtils.split(params.getFirst(filterName), ",");
+				for (String value : arr) {
+					values.add(value);
+				}
+				if (values.size() > 0) {
+					filterMap.put(filterName, values);
+				}
 			}
 		}
 	}
@@ -75,13 +85,9 @@ public class OverviewRequest {
 	public void setNeLon(double neLon) {
 		this.neLon = neLon;
 	}
-
-	public List<String> getCountries() {
-		return countries;
-	}
-
-	public void setCountries(List<String> countries) {
-		this.countries = countries;
+	
+	public Map<String, List<String>> getFilterMap() {
+		return filterMap;
 	}
 	
 }

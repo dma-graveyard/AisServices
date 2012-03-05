@@ -77,15 +77,18 @@ public class AisServiceBean implements AisService {
 				+ "AND vt.validTo >= :now "
 				+ "AND vt.aisVesselPosition.lat IS NOT NULL AND vt.aisVesselPosition.lon IS NOT NULL ";
 
-		if (overviewRequest.getCountries().size() > 0) {
-			String[] ors = new String[overviewRequest.getCountries().size()];
+		for (String filterKey : overviewRequest.getFilterMap().keySet()) {
+			List<String> values = overviewRequest.getFilterMap().get(filterKey);
+			String[] ors = new String[values.size()];
 			for (int i = 0; i < ors.length; i++) {
-				ors[i] = "vt.country = :country" + i;
+				ors[i] = "vt." + filterKey + " = :" + filterKey + i;
 			}
 			sql += "\nAND (";
 			sql += StringUtils.join(ors, " OR ");
 			sql += ")";
 		}
+		
+		System.out.println("sql: " + sql);
 
 		Query query = entityManager.createQuery(sql);
 		query.setParameter("swLat", overviewRequest.getSwLat());
@@ -93,12 +96,14 @@ public class AisServiceBean implements AisService {
 		query.setParameter("neLat", overviewRequest.getNeLat());
 		query.setParameter("neLon", overviewRequest.getNeLon());
 		query.setParameter("now", new Date());
-		if (overviewRequest.getCountries().size() > 0) {
-			for (int i = 0; i < overviewRequest.getCountries().size(); i++) {
-				query.setParameter("country" + i, overviewRequest.getCountries().get(i));
+		
+		for (String filterKey : overviewRequest.getFilterMap().keySet()) {
+			List<String> values = overviewRequest.getFilterMap().get(filterKey);
+			for (int i=0; i < values.size(); i++) {
+				query.setParameter(filterKey + i, values.get(i));
 			}
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		List<Object[]> lines = query.getResultList();
 		

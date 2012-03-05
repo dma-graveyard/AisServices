@@ -29,7 +29,11 @@ public class AisVesselTarget implements Serializable {
 	private Date validTo;
 	private String vesselClass;
 	private String country;
-	private String source;
+	private String sourceType;
+	private String sourceCountry;
+	private String sourceRegion;
+	private String sourceBs;
+	private String sourceSystem;
 	private AisVesselPosition aisVesselPosition;
 	private AisVesselStatic aisVesselStatic;
 
@@ -102,13 +106,49 @@ public class AisVesselTarget implements Serializable {
 		this.country = country;
 	}
 
-	@Column(name = "source", nullable = false, length = 4)
-	public String getSource() {
-		return source;
+	@Column(name = "source_type", nullable = false, length = 4)
+	public String getSourceType() {
+		return sourceType;
 	}
 
-	public void setSource(String source) {
-		this.source = source;
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	
+	@Column(name = "source_country", nullable = true, length = 3)
+	public String getSourceCountry() {
+		return sourceCountry;
+	}
+
+	public void setSourceCountry(String sourceCountry) {
+		this.sourceCountry = sourceCountry;
+	}
+
+	@Column(name = "source_region", nullable = true, length = 12)
+	public String getSourceRegion() {
+		return sourceRegion;
+	}
+
+	public void setSourceRegion(String sourceRegion) {
+		this.sourceRegion = sourceRegion;
+	}
+
+	@Column(name = "source_bs", nullable = true, length = 12)
+	public String getSourceBs() {
+		return sourceBs;
+	}
+
+	public void setSourceBs(String sourceBs) {
+		this.sourceBs = sourceBs;
+	}
+
+	@Column(name = "source_system", nullable = true, length = 12)
+	public String getSourceSystem() {
+		return sourceSystem;
+	}
+
+	public void setSourceSystem(String sourceSystem) {
+		this.sourceSystem = sourceSystem;
 	}
 
 	// bi-directional one-to-one association to AisVesselPosition

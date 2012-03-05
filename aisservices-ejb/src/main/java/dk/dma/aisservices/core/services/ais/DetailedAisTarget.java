@@ -91,7 +91,7 @@ public class DetailedAisTarget {
 		this.callsign = aisVesselStatic.getCallsign();
 		this.cargo = aisVesselStatic.getShipTypeCargo().prettyCargo();
 		
-		this.source = aisVessel.getSource();
+		this.source = aisVessel.getSourceType();
 
 		// Class A statics
 		if (aisClassAStatic != null) {
