@@ -88,8 +88,6 @@ public class AisServiceBean implements AisService {
 			sql += ")";
 		}
 		
-		System.out.println("sql: " + sql);
-
 		Query query = entityManager.createQuery(sql);
 		query.setParameter("swLat", overviewRequest.getSwLat());
 		query.setParameter("swLon", overviewRequest.getSwLon());
