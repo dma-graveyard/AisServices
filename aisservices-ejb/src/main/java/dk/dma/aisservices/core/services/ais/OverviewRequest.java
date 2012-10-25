@@ -16,6 +16,7 @@ public class OverviewRequest {
 	private double neLat = 360;
 	private double neLon = 360;
 	private Map<String, List<String>> filterMap = new HashMap<String, List<String>>();
+	private Map<String, List<String>> excludeMap = new HashMap<String, List<String>>();
 	
 	private static final String[] filterNames = {"vesselClass", "country", "sourceType", "sourceCountry", "sourceRegion", "sourceBs", "sourceSystem"};
 		
@@ -88,6 +89,10 @@ public class OverviewRequest {
 	
 	public Map<String, List<String>> getFilterMap() {
 		return filterMap;
+	}
+	
+	public Map<String, List<String>> getExcludeMap() {
+		return excludeMap;
 	}
 	
 }

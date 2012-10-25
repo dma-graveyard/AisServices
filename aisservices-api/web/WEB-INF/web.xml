@@ -16,6 +16,16 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>AisGreenland</servlet-name>
+		<servlet-class>dk.dma.aisservices.api.http.AisGreenland</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AisGreenland</servlet-name>
+		<url-pattern>/http/service_greenland</url-pattern>
+	</servlet-mapping>	
+	
+	<servlet>
 		<servlet-name>Status</servlet-name>
 		<servlet-class>dk.dma.aisservices.api.http.Status</servlet-class>
 	</servlet>

@@ -88,6 +88,17 @@ public class AisServiceBean implements AisService {
 			sql += ")";
 		}
 		
+		for (String filterKey : overviewRequest.getExcludeMap().keySet()) {
+			List<String> values = overviewRequest.getExcludeMap().get(filterKey);
+			String[] ands = new String[values.size()];
+			for (int i = 0; i < ands.length; i++) {
+				ands[i] = "vt." + filterKey + " != :" + filterKey + i;
+			}
+			sql += "\nAND (";
+			sql += StringUtils.join(ands, " AND ");
+			sql += ")";
+		}
+		
 		Query query = entityManager.createQuery(sql);
 		query.setParameter("swLat", overviewRequest.getSwLat());
 		query.setParameter("swLon", overviewRequest.getSwLon());
@@ -97,6 +108,13 @@ public class AisServiceBean implements AisService {
 		
 		for (String filterKey : overviewRequest.getFilterMap().keySet()) {
 			List<String> values = overviewRequest.getFilterMap().get(filterKey);
+			for (int i=0; i < values.size(); i++) {
+				query.setParameter(filterKey + i, values.get(i));
+			}
+		}
+		
+		for (String filterKey : overviewRequest.getExcludeMap().keySet()) {
+			List<String> values = overviewRequest.getExcludeMap().get(filterKey);
 			for (int i=0; i < values.size(); i++) {
 				query.setParameter(filterKey + i, values.get(i));
 			}
